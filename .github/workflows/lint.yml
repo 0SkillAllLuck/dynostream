@@ -1,0 +1,29 @@
+name: Lint
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  go-test:
+    name: GoLangCI Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.20.x
+          check-latest: true
+      - name: Run Tests
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          golangci_lint_flags: "--tests=false"
