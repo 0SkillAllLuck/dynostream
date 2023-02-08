@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"errors"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -13,9 +14,9 @@ var (
 	ErrNoStreamArn = errors.New("no stream ARN found")
 )
 
-func GetLastStreamArn(db dynamodbiface.DynamoDBAPI, table string) (*string, error) {
+func GetLastStreamArn(ctx context.Context, db dynamodbiface.DynamoDBAPI, table string) (*string, error) {
 	// Get the table information
-	tableInfo, err := db.DescribeTable(&dynamodb.DescribeTableInput{
+	tableInfo, err := db.DescribeTableWithContext(ctx, &dynamodb.DescribeTableInput{
 		TableName: aws.String(table),
 	})
 	if err != nil {

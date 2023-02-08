@@ -35,14 +35,14 @@ func (ds *DynoStream) Subscribe(ctx context.Context) (<-chan *dynamodbstreams.Re
 			default:
 				previousShardId = shardId
 				// Get Stream ARN
-				streamArn, err = utils.GetLastStreamArn(ds.db, ds.table)
+				streamArn, err = utils.GetLastStreamArn(ctx, ds.db, ds.table)
 				if err != nil {
 					errorChannel <- err
 					continue
 				}
 
 				// Get Shard ID
-				shardId, err = utils.GetShardId(ds.dbStreams, previousShardId, streamArn)
+				shardId, err = utils.GetShardId(ctx, ds.dbStreams, previousShardId, streamArn)
 				if err != nil {
 					errorChannel <- err
 					continue
@@ -55,7 +55,7 @@ func (ds *DynoStream) Subscribe(ctx context.Context) (<-chan *dynamodbstreams.Re
 				}
 
 				// TODO: Handle shard splitting
-				err = ds.processShard(&dynamodbstreams.GetShardIteratorInput{
+				err = ds.processShard(ctx, &dynamodbstreams.GetShardIteratorInput{
 					StreamArn:         streamArn,
 					ShardId:           shardId,
 					ShardIteratorType: aws.String(dynamodbstreams.ShardIteratorTypeLatest),

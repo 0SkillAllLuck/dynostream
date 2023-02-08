@@ -1,15 +1,16 @@
 package dynostream
 
 import (
+	"context"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 )
 
-func (ds *DynoStream) processShard(input *dynamodbstreams.GetShardIteratorInput, channel chan<- *dynamodbstreams.Record) error {
+func (ds *DynoStream) processShard(ctx context.Context, input *dynamodbstreams.GetShardIteratorInput, channel chan<- *dynamodbstreams.Record) error {
 	// Get the shard iterator
-	shardIterator, err := ds.dbStreams.GetShardIterator(input)
+	shardIterator, err := ds.dbStreams.GetShardIteratorWithContext(ctx, input)
 	if err != nil {
 		return err
 	}
@@ -20,7 +21,7 @@ func (ds *DynoStream) processShard(input *dynamodbstreams.GetShardIteratorInput,
 	// Process the shard records
 	iterator := shardIterator.ShardIterator
 	for iterator != nil {
-		records, err := ds.dbStreams.GetRecords(&dynamodbstreams.GetRecordsInput{
+		records, err := ds.dbStreams.GetRecordsWithContext(ctx, &dynamodbstreams.GetRecordsInput{
 			ShardIterator: iterator,
 		})
 
