@@ -1,9 +1,3 @@
-# dynostream
-Easy to use Stream Subscriber for DynamoDB
-
-## Usage
-
-```go
 package main
 
 import (
@@ -39,5 +33,3 @@ func main() {
 		log.Println("Record:", record)
 	}
 }
-
-```
