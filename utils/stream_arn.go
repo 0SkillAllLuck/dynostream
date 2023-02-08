@@ -8,6 +8,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 )
 
+var (
+	// ErrNoStreamArn is returned when no stream ARN is found
+	ErrNoStreamArn = errors.New("no stream ARN found")
+)
+
 func GetLastStreamArn(db dynamodbiface.DynamoDBAPI, table string) (*string, error) {
 	// Get the table information
 	tableInfo, err := db.DescribeTable(&dynamodb.DescribeTableInput{
@@ -19,7 +24,7 @@ func GetLastStreamArn(db dynamodbiface.DynamoDBAPI, table string) (*string, erro
 
 	// Get the stream ARN
 	if tableInfo.Table.LatestStreamArn == nil {
-		return nil, errors.New("no stream ARN found")
+		return nil, ErrNoStreamArn
 	}
 
 	return tableInfo.Table.LatestStreamArn, nil
