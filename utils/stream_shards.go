@@ -1,12 +1,14 @@
 package utils
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 	"github.com/aws/aws-sdk-go/service/dynamodbstreams/dynamodbstreamsiface"
 )
 
-func GetShardId(dbStreams dynamodbstreamsiface.DynamoDBStreamsAPI, previousShardId *string, streamArn *string) (*string, error) {
-	streamInfo, err := dbStreams.DescribeStream(&dynamodbstreams.DescribeStreamInput{
+func GetShardId(ctx context.Context, dbStreams dynamodbstreamsiface.DynamoDBStreamsAPI, previousShardId *string, streamArn *string) (*string, error) {
+	streamInfo, err := dbStreams.DescribeStreamWithContext(ctx, &dynamodbstreams.DescribeStreamInput{
 		StreamArn: streamArn,
 	})
 	if err != nil {
